@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-app.post('/chat', async (req, res) => {
+app.post('/api/chat', async (req, res) => {  // ← updated this line
     const { prompt } = req.body;
     console.log("Received prompt:", prompt);
 
@@ -35,7 +35,6 @@ app.post('/chat', async (req, res) => {
         console.log("AI Reply:", reply);
 
         res.json({ reply });
-
     } catch (err) {
         console.error("Error talking to OpenAI:", err);
         res.status(500).json({ error: 'Error contacting OpenAI' });
@@ -45,3 +44,4 @@ app.post('/chat', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
+
