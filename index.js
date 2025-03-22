@@ -9,9 +9,12 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Backend is live 🚀');
+});
+
 app.post('/api/chat', async (req, res) => {
   const { prompt } = req.body;
-  console.log("Received prompt:", prompt);
 
   try {
     const response = await axios.post(
@@ -23,19 +26,16 @@ app.post('/api/chat', async (req, res) => {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         },
       }
     );
 
-    console.log("Raw OpenAI response:", response.data);
     const reply = response.data.choices[0].message.content;
-    console.log("AI Reply:", reply);
-
     res.json({ reply });
   } catch (err) {
-    console.error("Error talking to OpenAI:", err);
+    console.error('Error talking to OpenAI:', err);
     res.status(500).json({ error: 'Error contacting OpenAI' });
   }
 });
