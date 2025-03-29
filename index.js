@@ -114,6 +114,15 @@ Be as detailed and insightful as possible. If useful, include numbers, quotes, d
   }
 });
 
+app.get('/api/responses', async (req, res) => {
+  try {
+    const responses = await Response.find().sort({ createdAt: -1 }).limit(50);
+    res.json(responses);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch responses from MongoDB' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
