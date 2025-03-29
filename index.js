@@ -4,9 +4,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-console.log('Loaded OpenAI Key:', process.env.OPENAI_API_KEY);
-console.log('Loaded SerpAPI Key:', process.env.SERPAPI_KEY);
-
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -55,8 +52,6 @@ app.post('/api/chat', async (req, res) => {
 
     const results = serpResponse.data.organic_results || [];
     const snippets = results.map(r => `- ${r.title}: ${r.snippet}`).join('\n');
-    console.log("📡 Search Query:", searchQuery);
-    console.log("📡 Search Snippets:\n", snippets);
 
     const isShortPrompt = prompt.trim().split(' ').length < 10;
 
@@ -115,7 +110,6 @@ Be as detailed and insightful as possible. If useful, include numbers, quotes, d
 
     res.json({ reply });
   } catch (err) {
-    console.error('❌ Error:', err.message);
     res.status(500).json({ error: 'Search or OpenAI request failed' });
   }
 });
@@ -123,4 +117,3 @@ Be as detailed and insightful as possible. If useful, include numbers, quotes, d
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
-
