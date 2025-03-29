@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 console.log('Loaded OpenAI Key:', process.env.OPENAI_API_KEY);
@@ -11,6 +12,26 @@ const PORT = process.env.PORT || 5001;
 
 app.use(cors());
 app.use(express.json());
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('✅ Connected to MongoDB');
+}).catch((err) => {
+  console.error('❌ MongoDB connection error:', err.message);
+});
+
+const ResponseSchema = new mongoose.Schema({
+  prompt: String,
+  reply: String,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Response = mongoose.model('Response', ResponseSchema);
 
 app.get('/', (req, res) => {
   res.send('Backend is live 🚀');
@@ -89,6 +110,9 @@ Be as detailed and insightful as possible. If useful, include numbers, quotes, d
     );
 
     const reply = chatResponse.data.choices[0].message.content;
+
+    await Response.create({ prompt, reply });
+
     res.json({ reply });
   } catch (err) {
     console.error('❌ Error:', err.message);
@@ -99,3 +123,4 @@ Be as detailed and insightful as possible. If useful, include numbers, quotes, d
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
+
